@@ -1669,7 +1669,6 @@ func dwarfEnabled(ctxt *Link) bool {
 // all the work that can only be done after addresses have been assigned to
 // text symbols.
 func dwarfGenerateDebugInfo(ctxt *Link) {
-	println("toto")
 	if !dwarfEnabled(ctxt) {
 		return
 	}
@@ -1690,7 +1689,6 @@ func dwarfGenerateDebugInfo(ctxt *Link) {
 	newattr(die, dwarf.DW_AT_byte_size, dwarf.DW_CLS_CONSTANT, int64(ctxt.Arch.PtrSize), 0)
 	newattr(die, dwarf.DW_AT_go_kind, dwarf.DW_CLS_CONSTANT, objabi.KindUintptr, 0)
 	newattr(die, dwarf.DW_AT_go_runtime_type, dwarf.DW_CLS_ADDRESS, 0, lookupOrDiag(ctxt, "type.uintptr"))
-	println("lolo")
 
 	// Prototypes needed for type synthesis.
 	prototypedies = map[string]*dwarf.DWDie{

@@ -592,6 +592,7 @@ func startInstall(dir string) chan struct{} {
 // runInstall installs the library, package, or binary associated with dir,
 // which is relative to $GOROOT/src.
 func runInstall(dir string, ch chan struct{}) {
+	//xprintf("runInstall %s\n", dir)
 	if dir == "net" || dir == "os/user" || dir == "crypto/x509" {
 		fatalf("go_bootstrap cannot depend on cgo package %s", dir)
 	}
@@ -815,7 +816,7 @@ func runInstall(dir string, ch chan struct{}) {
 	bgwait(&wg)
 
 	// Compile the files.
-	xprintf("toto files '%s': %v\n", dir, files)
+	//xprintf("toto files '%s': %v\n", dir, files)
 	for _, p := range files {
 		if !strings.HasSuffix(p, ".s") {
 			continue

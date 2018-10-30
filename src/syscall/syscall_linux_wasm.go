@@ -389,3 +389,21 @@ func (cmsg *Cmsghdr) SetLen(length int) {
 func rawVforkSyscall(trap, a1 uintptr) (r1 uintptr, err Errno) {
 	panic("not implemented")
 }
+
+func Syscall(trap, a1, a2, a3 uintptr) (r1, r2 uintptr, err Errno) {
+	return 0, 0, ENOSYS
+}
+
+func Syscall6(trap, a1, a2, a3, a4, a5, a6 uintptr) (r1, r2 uintptr, err Errno) {
+	return 0, 0, ENOSYS
+}
+
+func RawSyscall(trap, a1, a2, a3 uintptr) (r1, r2 uintptr, err Errno) {
+	return 0, 0, ENOSYS
+}
+
+func RawSyscall6(trap, a1, a2, a3, a4, a5, a6 uintptr) (r1, r2 uintptr, err Errno) {
+	return 0, 0, ENOSYS
+}
+
+

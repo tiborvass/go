@@ -15,13 +15,13 @@
 // _rt0_wasm_js does NOT follow the Go ABI. It has two WebAssembly parameters:
 // R0: argc (i32)
 // R1: argv (i32)
-TEXT _rt0_wasm_js(SB),NOSPLIT,$0
-	JMP _rt0_wasm(SB)
-
+//TEXT _rt0_wasm_js(SB),NOSPLIT,$0
+//	JMP _rt0_wasm(SB)
+//
 TEXT _rt0_wasm_linux(SB),NOSPLIT,$0
-	JMP _rt0_wasm(SB)
-
-TEXT _rt0_wasm(SB),NOSPLIT,$0
+//	JMP _rt0_wasm(SB)
+//
+//TEXT _rt0_wasm(SB),NOSPLIT,$0
 	Get RUN
 	I32Const $RUN_STARTING
 	I32Eq
@@ -88,4 +88,7 @@ TEXT runtime·exit(SB), NOSPLIT, $0-4
 	RETUNWIND
 
 TEXT _rt0_wasm_js_lib(SB),NOSPLIT,$0
+	UNDEF
+
+TEXT _rt0_wasm_linux_lib(SB),NOSPLIT,$0
 	UNDEF

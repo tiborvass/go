@@ -815,6 +815,7 @@ func runInstall(dir string, ch chan struct{}) {
 	bgwait(&wg)
 
 	// Compile the files.
+	xprintf("toto files '%s': %v\n", dir, files)
 	for _, p := range files {
 		if !strings.HasSuffix(p, ".s") {
 			continue
@@ -1311,7 +1312,7 @@ func cmdbootstrap() {
 		xprintf("Building packages and commands for target, %s/%s.\n", goos, goarch)
 	}
 	targets := []string{"std", "cmd"}
-	if goos == "js" && goarch == "wasm" {
+	if goarch == "wasm" {
 		// Skip the cmd tools for js/wasm. They're not usable.
 		targets = targets[:1]
 	}

@@ -164,7 +164,7 @@ func asmb(ctxt *ld.Link) {
 	}
 
 	// look up program entry point
-	rt0 := uint32(len(hostImports)) + uint32(ctxt.Syms.ROLookup("_rt0_wasm_js", 0).Value>>16) - funcValueOffset
+	rt0 := uint32(len(hostImports)) + uint32(ctxt.Syms.ROLookup("_rt0_wasm_" + ctxt.HeadType.String(), 0).Value>>16) - funcValueOffset
 
 	ctxt.Out.Write([]byte{0x00, 0x61, 0x73, 0x6d}) // magic
 	ctxt.Out.Write([]byte{0x01, 0x00, 0x00, 0x00}) // version

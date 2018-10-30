@@ -6,6 +6,7 @@
 // +build !mipsle
 // +build !mips64
 // +build !mips64le
+// +build !wasm
 // +build linux
 
 package runtime

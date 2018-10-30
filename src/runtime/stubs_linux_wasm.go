@@ -2,8 +2,11 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// +build linux
+// +build linux,wasm
 
 package runtime
 
-func sbrk0() uintptr
+// sbrk0 returns the current process brk, or 0 if not implemented.
+func sbrk0() uintptr {
+	return 0
+}

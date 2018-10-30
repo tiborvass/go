@@ -55,6 +55,7 @@ type wasmFuncType struct {
 
 var wasmFuncTypes = map[string]*wasmFuncType{
 	"_rt0_wasm_js":           &wasmFuncType{Params: []byte{I32, I32}},                                 // argc, argv
+	"_rt0_wasm_linux":        &wasmFuncType{Params: []byte{I32, I32}},                                 // argc, argv
 	"runtime.wasmMove":       &wasmFuncType{Params: []byte{I32, I32, I32}},                            // dst, src, len
 	"runtime.wasmZero":       &wasmFuncType{Params: []byte{I32, I32}},                                 // ptr, len
 	"runtime.wasmDiv":        &wasmFuncType{Params: []byte{I64, I64}, Results: []byte{I64}},           // x, y -> x/y

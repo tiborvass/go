@@ -80,6 +80,9 @@ func (ctxt *Link) computeTLSOffset() {
 		objabi.Hopenbsd,
 		objabi.Hdragonfly,
 		objabi.Hsolaris:
+		if ctxt.Arch.Family == sys.Wasm {
+			break
+		}
 		if objabi.GOOS == "android" {
 			switch ctxt.Arch.Family {
 			case sys.AMD64:

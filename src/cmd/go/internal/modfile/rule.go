@@ -13,6 +13,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"unicode"
 
 	"cmd/go/internal/module"
@@ -121,10 +122,16 @@ func parseToFile(file string, data []byte, fix VersionFixer, strict bool) (*File
 	}
 
 	var errs bytes.Buffer
+	var wg sync.WaitGroup
+	var mu sync.Mutex
 	for _, x := range fs.Stmt {
 		switch x := x.(type) {
 		case *Line:
-			f.add(&errs, x, x.Token[0], x.Token[1:], fix, strict)
+			wg.Add(1)
+			go func(x *Line) {
+				defer wg.Done()
+				f.add(&errs, x, x.Token[0], x.Token[1:], fix, strict, &mu)
+			}(x)
 
 		case *LineBlock:
 			if len(x.Token) > 1 {
@@ -141,11 +148,17 @@ func parseToFile(file string, data []byte, fix VersionFixer, strict bool) (*File
 				continue
 			case "module", "require", "exclude", "replace":
 				for _, l := range x.Line {
-					f.add(&errs, l, x.Token[0], l.Token, fix, strict)
+					v := x.Token[0]
+					wg.Add(1)
+					go func(l *Line) {
+						defer wg.Done()
+						f.add(&errs, l, v, l.Token, fix, strict, &mu)
+					}(l)
 				}
 			}
 		}
 	}
+	wg.Wait()
 
 	if errs.Len() > 0 {
 		return nil, errors.New(strings.TrimRight(errs.String(), "\n"))
@@ -155,7 +168,7 @@ func parseToFile(file string, data []byte, fix VersionFixer, strict bool) (*File
 
 var GoVersionRE = lazyregexp.New(`^([1-9][0-9]*)\.(0|[1-9][0-9]*)$`)
 
-func (f *File) add(errs *bytes.Buffer, line *Line, verb string, args []string, fix VersionFixer, strict bool) {
+func (f *File) add(errs *bytes.Buffer, line *Line, verb string, args []string, fix VersionFixer, strict bool, mu *sync.Mutex) {
 	// If strict is false, this module is a dependency.
 	// We ignore all unknown directives as well as main-module-only
 	// directives like replace and exclude. It will work better for
@@ -227,6 +240,7 @@ func (f *File) add(errs *bytes.Buffer, line *Line, verb string, args []string, f
 			fmt.Fprintf(errs, "%s:%d: %v\n", f.Syntax.Name, line.Start.Line, &Error{Verb: verb, ModPath: s, Err: err})
 			return
 		}
+		mu.Lock()
 		if verb == "require" {
 			f.Require = append(f.Require, &Require{
 				Mod:      module.Version{Path: s, Version: v},
@@ -239,6 +253,7 @@ func (f *File) add(errs *bytes.Buffer, line *Line, verb string, args []string, f
 				Syntax: line,
 			})
 		}
+		mu.Unlock()
 	case "replace":
 		arrow := 2
 		if len(args) >= 2 && args[1] == "=>" {
@@ -297,11 +312,13 @@ func (f *File) add(errs *bytes.Buffer, line *Line, verb string, args []string, f
 				return
 			}
 		}
+		mu.Lock()
 		f.Replace = append(f.Replace, &Replace{
 			Old:    module.Version{Path: s, Version: v},
 			New:    module.Version{Path: ns, Version: nv},
 			Syntax: line,
 		})
+		mu.Unlock()
 	}
 }
 
